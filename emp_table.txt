@@ -1,0 +1,9 @@
+create table employee_details(
+eId int primary key auto_increment,
+eName varchar(20) not null,
+eRole varchar(15) not null,
+eSalary double,
+eDOB date,
+eUserName varchar(10) not null unique,
+ePassword varchar(10) not null
+);
