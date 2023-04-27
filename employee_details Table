@@ -1,0 +1,10 @@
+create table employee_details(
+Id int ,
+Name varchar(10) not null,
+Role varchar(10) not null,
+Salary double,
+DOB date ,
+Username varchar(10) unique not null,
+Password varchar(10),
+CreatedDateTime datetime(6) not null
+);
