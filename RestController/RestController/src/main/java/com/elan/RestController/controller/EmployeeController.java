@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping(path = "/employee")
 public class EmployeeController {
@@ -20,13 +23,13 @@ public class EmployeeController {
 
     @PostMapping(path = "/ad")
     //by parameter we can save the values in DB using the requestparam annotation
-    public @ResponseBody ResponseEntity<Employee_details> AddDetails( @RequestParam Integer eId,@RequestParam String eName, @RequestParam String eRole,@RequestParam double eSalary,@RequestParam  String eUserName,@RequestParam String ePassword,@RequestParam String eDOB){
+    public @ResponseBody ResponseEntity<Employee_details> AddDetails( @RequestParam String eName, @RequestParam String eRole,@RequestParam double eSalary,@RequestParam  String eUserName,@RequestParam String ePassword,@RequestParam LocalDate eDOB){
         return employeeService.ad_Details(eName,eRole,eSalary,eUserName, ePassword,  eDOB);
     }
 
     // By JSON format we can pass/ save the values by using the requestbody annotation
     @PostMapping(value = "/add")
-    public ResponseEntity ad(@RequestBody EmployeeTransfer employeeTransfer){
+    public ResponseEntity add(@RequestBody EmployeeTransfer employeeTransfer){
 
         return employeeService.AddDeatils(employeeTransfer);
     }
@@ -37,9 +40,9 @@ public class EmployeeController {
 
     }
 
-    @PutMapping(value = "update/{eId}")
+    @PatchMapping(value = "update/{eId}")
 
-    public ResponseEntity<Employee_details> updateDetails(@PathVariable("eId") int eId,  @RequestBody Employee_details employeeDetails){
+    public ResponseEntity<Employee_details> updateDetails(@PathVariable("eId") int eId, @RequestBody Employee_details employeeDetails){
         return employeeService.Update(eId,employeeDetails);
     }
 

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -36,7 +37,7 @@ public class EmployeeService {
         return responseEntity;
     }
 
-    public ResponseEntity ad_Details(String eName, String eRole, double eSalary, String eUserName, String ePassword, String eDOB) {
+    public ResponseEntity ad_Details(String eName, String eRole, double eSalary, String eUserName, String ePassword, LocalDate eDOB) {
         ResponseEntity responseEntity;
         CustomMessage message = new CustomMessage();
         Employee_details employeeDetails = new Employee_details();
@@ -45,7 +46,7 @@ public class EmployeeService {
         employeeDetails.setEDOB(eDOB);
         employeeDetails.setESalary(eSalary);
         employeeDetails.setERole(eRole);
-        employeeDetails.setEPassword(ePassword);
+        employeeDetails.setEPassowrd(ePassword);
         employeeDetails.setEUserName(eUserName);
         responseEntity = ResponseEntity.status(HttpStatus.ACCEPTED).body(empRepository.save(employeeDetails));
         return responseEntity;
@@ -59,9 +60,9 @@ public class EmployeeService {
 
         employeeDetails.setERole(employeeTransfer.getERole());
         employeeDetails.setESalary(employeeTransfer.getESalary());
-        employeeDetails.setEPassword(employeeTransfer.getEPassword());
+        employeeDetails.setEPassowrd(employeeTransfer.getEPassword());
         employeeDetails.setEUserName(employeeTransfer.getEUserName());
-        employeeDetails.setEDOB(employeeTransfer.getEDOB());
+        employeeDetails.setEDOB(LocalDate.parse(employeeTransfer.getEDOB().format(DateTimeFormatter.ofPattern("yyy-MM-dd"))));
         employeeDetails = empRepository.save(employeeDetails);
 
         employeeTransfer.setEId(employeeDetails.getEId());
@@ -70,10 +71,13 @@ public class EmployeeService {
         employeeTransfer.setERole(employeeDetails.getERole());
         employeeTransfer.setEDOB(employeeDetails.getEDOB());
         employeeTransfer.setEUserName(employeeTransfer.getEUserName());
+        employeeTransfer.setECreatedDateTime(employeeDetails.getECreatedDateTime());
 
+       // employeeTransfer.setEPassword(employeeTransfer.getEPasswordreturn());
         responseEntity = ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeTransfer);
 
         return responseEntity;
+
     }
 
     public ResponseEntity Delete(int eId) {
