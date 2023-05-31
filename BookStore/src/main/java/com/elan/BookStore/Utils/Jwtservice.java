@@ -22,22 +22,26 @@ public class Jwtservice {
     }
 
     public String generateToken(Map<String, Object> extraclaims,User user){
+        System.out.println("generatetoken");
         extraclaims.put("Email",user.getEmailID());
+        System.out.println(Jwts.builder().setSubject(user.getUserName()).compact());
         return Jwts.builder()
                 .setSubject(user.getUserName())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .signWith(SignatureAlgorithm.HS256,getSignInKey())
                 .setIssuer(user.getId().toString())
-                .setClaims(extraclaims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60))
+                .signWith(SignatureAlgorithm.HS256,getSignInKey())
                 .compact();
+
     }
 
     private byte[] getSignInKey() {
         return Base64Codec.BASE64.decode(Key_Value);
     }
     public String extractUsername(String token) {
-        return extractclaims(token,Claims::getSubject);
+        var us = extractclaims(token,Claims::getSubject);
+        System.out.println("us token"+us);
+        return us ;
     }
 
     private <T>T extractclaims(String token, Function<Claims,T>claimsTFunction ) {
@@ -46,9 +50,13 @@ public class Jwtservice {
     }
 
     private Claims extractAllclaims(String token) {
+        System.out.println("extractallclaims");
             return Jwts.parser().setSigningKey(getSignInKey())
                     .parseClaimsJws(token)
                     .getBody();
+
+
+
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

@@ -1,5 +1,6 @@
 package com.elan.BookStore.CustomExceptionHandler;
 
+import com.elan.BookStore.CustomException.CustomTokenException;
 import com.elan.BookStore.CustomException.NotFoundException;
 import com.elan.BookStore.CustomException.AccessDeniedException;
 import com.elan.BookStore.Model.ErrorModel;
@@ -24,6 +25,16 @@ public class BookExceptionHandler {
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorModel> accessDenied(AccessDeniedException ex){
+        ErrorModel errorMessage = ErrorModel.builder()
+                .Error(HttpStatus.UNAUTHORIZED.name())
+                .Message(ex.getMsg())
+                .TimeStamp(LocalDateTime.now())
+                .Status(HttpStatus.UNAUTHORIZED.value())
+                .build();
+        return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+    }
+    @ExceptionHandler(CustomTokenException.class)
+    public ResponseEntity<ErrorModel> invalidToken(CustomTokenException ex){
         ErrorModel errorMessage = ErrorModel.builder()
                 .Error(HttpStatus.UNAUTHORIZED.name())
                 .Message(ex.getMsg())

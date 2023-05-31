@@ -29,28 +29,26 @@ public class BookAuthorService {
         }
         List<BookAuthor> bookAuthors = bookAuthorRespository.findAll();
         BookResponse bookResponse = new BookResponse();
-        return ResponseEntity.status(HttpStatus.OK).body(books);
+        for(Book book :books) {
+            bookResponse.setId(book.getId());
+            bookResponse.setBookType(book.getBookType());
+            bookResponse.setName(book.getName());
+            bookResponse.setPrice(book.getPrice());
+            bookResponse.setDescription(book.getDescription());
+            bookResponse.setYearOfPublication(book.getYearOfPublication());
+        }
+        List<AuthorResponse> authorResponseList = new ArrayList<>();
+        for (BookAuthor bookAuthor : bookAuthors) {
+            AuthorResponse authorResponse = new AuthorResponse();
+            authorResponse.setId(bookAuthor.getAuthor().getId());
+            authorResponse.setGenre(bookAuthor.getAuthor().getGenre());
+            authorResponse.setGender(bookAuthor.getAuthor().getGender());
+            authorResponse.setName(bookAuthor.getAuthor().getName());
+            authorResponseList.add(authorResponse);
+        }
+        bookResponse.setAuthor(authorResponseList);
+        return ResponseEntity.status(HttpStatus.OK).body(bookResponse);
     }
-//        for(Book book :books) {
-//            bookResponse.setId(book.getId());
-//            bookResponse.setBookType(book.getBookType());
-//            bookResponse.setName(book.getName());
-//            bookResponse.setPrice(book.getPrice());
-//            bookResponse.setDescription(book.getDescription());
-//            bookResponse.setYearOfPublication(book.getYearOfPublication());
-//        }
-//        List<AuthorResponse> authorResponseList = new ArrayList<>();
-//        for (BookAuthor bookAuthor : bookAuthors) {
-//            AuthorResponse authorResponse = new AuthorResponse();
-//            authorResponse.setId(bookAuthor.getAuthor().getId());
-//            authorResponse.setGenre(bookAuthor.getAuthor().getGenre());
-//            authorResponse.setGender(bookAuthor.getAuthor().getGender());
-//            authorResponse.setName(bookAuthor.getAuthor().getName());
-//            authorResponseList.add(authorResponse);
-//        }
-//        bookResponse.setAuthor(authorResponseList);
-//        return ResponseEntity.status(HttpStatus.OK).body(bookResponse);
-//    }
 
     public ResponseEntity getdetailsByID(Integer id) throws NotFoundException {
 

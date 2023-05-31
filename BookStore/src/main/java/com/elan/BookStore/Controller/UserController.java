@@ -21,6 +21,7 @@ public class UserController {
 
     @PostMapping("login/")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) throws NotFoundException {
+        System.out.println("Controllerlogin");
         return service.login(loginRequest);
     }
 }

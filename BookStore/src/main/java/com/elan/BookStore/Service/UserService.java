@@ -54,6 +54,7 @@ public class UserService  {
         if(user.isEmpty()){
             throw new NotFoundException("User Details Not Found");
         }
+        System.out.println("loginservice"+user);
         return ResponseEntity.status(HttpStatus.FOUND).body(token.tokenMessage(jwtUtils.generateToken(user.get())));
     }
 }
