@@ -12,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface EmpRepository extends JpaRepository<Employee_details, Integer> {
     List<Employee_details> findByeName(String eName);
+    List<Employee_details> findByeUserName(String eUserName);
 
 }

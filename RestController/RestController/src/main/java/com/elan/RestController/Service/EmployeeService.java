@@ -3,14 +3,14 @@ package com.elan.RestController.Service;
 import com.elan.RestController.DAO.Employee_details;
 import com.elan.RestController.DTO.EmployeeTransfer;
 import com.elan.RestController.Repository.EmpRepository;
-import com.elan.RestController.Message.CustomMessage;
+import com.elan.RestController.CustomHandler.CustomMessage;
+import com.elan.RestController.Validation.CustomValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -18,6 +18,9 @@ public class EmployeeService {
     @Autowired
     EmpRepository empRepository;
 
+
+    @Autowired
+    CustomValidation validation;
 
     public ResponseEntity getallDeatils() {
         CustomMessage message = new CustomMessage();
@@ -41,7 +44,7 @@ public class EmployeeService {
         ResponseEntity responseEntity;
         CustomMessage message = new CustomMessage();
         Employee_details employeeDetails = new Employee_details();
-        
+
         employeeDetails.setEName(eName);
         employeeDetails.setEDOB(eDOB);
         employeeDetails.setESalary(eSalary);
@@ -62,22 +65,22 @@ public class EmployeeService {
         employeeDetails.setESalary(employeeTransfer.getESalary());
         employeeDetails.setEPassowrd(employeeTransfer.getEPassword());
         employeeDetails.setEUserName(employeeTransfer.getEUserName());
-        employeeDetails.setEDOB(LocalDate.parse(employeeTransfer.getEDOB().format(DateTimeFormatter.ofPattern("yyy-MM-dd"))));
-        employeeDetails = empRepository.save(employeeDetails);
+        employeeDetails.setEDOB(employeeTransfer.getEDOB());
+        Boolean checkvalidation = validation.check(employeeDetails);
+        if (checkvalidation.equals(true)) {
+            employeeDetails = empRepository.save(employeeDetails);
+            employeeTransfer.setEId(employeeDetails.getEId());
+            employeeTransfer.setEName(employeeDetails.getEName());
+            employeeTransfer.setESalary(employeeDetails.getESalary());
+            employeeTransfer.setERole(employeeDetails.getERole());
+            employeeTransfer.setEDOB(employeeDetails.getEDOB());
+            employeeTransfer.setEUserName(employeeTransfer.getEUserName());
+            employeeTransfer.setECreatedDateTime(employeeDetails.getECreatedDateTime());
+            responseEntity = new ResponseEntity<>(employeeTransfer, HttpStatus.ACCEPTED);
+            return responseEntity;
 
-        employeeTransfer.setEId(employeeDetails.getEId());
-        employeeTransfer.setEName(employeeDetails.getEName());
-        employeeTransfer.setESalary(employeeDetails.getESalary());
-        employeeTransfer.setERole(employeeDetails.getERole());
-        employeeTransfer.setEDOB(employeeDetails.getEDOB());
-        employeeTransfer.setEUserName(employeeTransfer.getEUserName());
-        employeeTransfer.setECreatedDateTime(employeeDetails.getECreatedDateTime());
-
-       // employeeTransfer.setEPassword(employeeTransfer.getEPasswordreturn());
-        responseEntity = ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeTransfer);
-
-        return responseEntity;
-
+        }
+        return responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity Delete(int eId) {
@@ -100,15 +103,16 @@ public class EmployeeService {
         Optional<Employee_details> employeeDetails1 = empRepository.findById(eId);
         CustomMessage message = new CustomMessage();
         if (employeeDetails1.isPresent()) {
-            employeeDetails.setEId(eId);
-            Employee_details emp = empRepository.save(employeeDetails);
-            responseEntity = (emp.getEName().equals(employeeDetails.getEName())) ? (ResponseEntity.status(HttpStatus.ACCEPTED).body(message.Update())) : (ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(message.idNotfound()));
-
-            return responseEntity;
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.idNotfound());
-            return responseEntity;
+            Boolean checkvalidation = validation.check(employeeDetails);
+            if (checkvalidation.equals(true)) {
+                employeeDetails.setEId(eId);
+                Employee_details emp = empRepository.save(employeeDetails);
+                responseEntity = (emp.getEName().equals(employeeDetails.getEName())) ? (ResponseEntity.status(HttpStatus.ACCEPTED).body(message.Update())) : (ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(message.idNotfound()));
+                return responseEntity;
+            }
         }
+        responseEntity =ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.idNotfound());
+        return responseEntity;
     }
 
     public ResponseEntity<Employee_details> GetById(int eId) {
@@ -131,6 +135,4 @@ public class EmployeeService {
        responseEntity = (!employeeDetails.isEmpty())?(ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeDetails)):(ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.dataNotfound()));
         return responseEntity;//=ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeDetails) ;
     }
-
-
 }

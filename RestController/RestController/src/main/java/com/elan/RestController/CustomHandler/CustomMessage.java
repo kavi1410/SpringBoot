@@ -1,14 +1,9 @@
-package com.elan.RestController.Message;
+package com.elan.RestController.CustomHandler;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class CustomMessage {
-
     private String message;
-
-
-
      LocalDateTime dateTime = LocalDateTime.now();
 
     public LocalDateTime getDateTime() {
